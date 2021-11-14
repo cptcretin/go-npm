@@ -13,7 +13,7 @@ const request = require('request'),
 // Mapping from Node's `process.arch` to Golang's `$GOARCH`
 const ARCH_MAPPING = {
     "ia32": "386",
-    "x64": "amd64",
+    "x64": "x86_64",
     "arm": "arm"
 };
 
@@ -59,7 +59,7 @@ function verifyAndPlaceBinary(binName, binPath, callback) {
         if (err) return callback("Error getting binary installation path from `npm bin`");
 
         // Move the binary file
-        fs.renameSync(path.join(binPath, binName), path.join(installationPath, binName));
+        fs.cpSync(path.join(binPath, binName), path.join(installationPath, binName));
 
         callback(null);
     });
@@ -159,7 +159,7 @@ function install(callback) {
 
     mkdirp.sync(opts.binPath);
     let ungz = zlib.createGunzip();
-    let untar = tar.Extract({path: opts.binPath});
+    let untar = tar.extract({path: opts.binPath});
 
     ungz.on('error', callback);
     untar.on('error', callback);
